@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import styled from '@emotion/styled';
+import React, { useContext } from "react";
+import styled from "@emotion/styled";
 
-import { GameContext } from './app';
-import { getXPToLevel } from '../hooks/game';
-import { COLORS } from '../data/constants';
+import { GameContext } from "./app";
+import { getXPToLevel } from "../hooks/game";
+import { COLORS } from "../data/constants";
 
 const Container = styled.div`
   position: absolute;
@@ -33,7 +33,7 @@ const HealthContainer = styled.div`
 
 const Health = styled.div`
   ${({ percent }) => ({
-    width: `${Math.floor(percent * 100)}%`,
+    width: `${Math.floor(percent * 100)}%`
   })}
   background-color: ${COLORS.darkRed};
   position: absolute;
@@ -59,7 +59,7 @@ const XPContainer = styled.div`
 
 const XPBar = styled.div`
   ${({ percent }) => ({
-    width: `${Math.floor(percent * 100)}%`,
+    width: `${Math.floor(percent * 100)}%`
   })}
   background-color: ${COLORS.darkYellow};
   position: absolute;
@@ -67,13 +67,13 @@ const XPBar = styled.div`
   top: 0;
 `;
 
-
 const PlayerInfo = () => {
   const { state } = useContext(GameContext);
   const { player } = state;
   const maxXP = getXPToLevel(player.level);
 
-  return (
+  return null;
+  /*return (
     <Container>
       <h1>Player, Level: {player.level}</h1>
       <HealthContainer>
@@ -85,7 +85,7 @@ const PlayerInfo = () => {
         <XPBar percent={player.xp / maxXP} />
       </XPContainer>
     </Container>
-  );
+  );*/
 };
 
 export default PlayerInfo;

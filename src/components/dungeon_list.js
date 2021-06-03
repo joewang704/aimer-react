@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
-import styled from '@emotion/styled';
+import React, { useContext } from "react";
+import styled from "@emotion/styled";
 
-import { GameContext } from './app';
-import { DUNGEONS } from '../data/dungeons';
+import { GameContext } from "./app";
+import { DUNGEONS } from "../data/dungeons";
 
 const Container = styled.div`
   display: flex;
+  overflow-x: scroll;
 `;
 
 const DungeonContainer = styled.div`
@@ -29,29 +30,45 @@ const DungeonList = () => {
     <Container>
       {DUNGEONS.map((dungeon, i) => {
         const { name, lvl, enemies } = dungeon;
-        const items = Object.values(enemies.reduce((acc, curr) => {
-          curr.drops && curr.drops.forEach(item => {
-            acc[item.id] = item;
-          })
-          return acc;
-        }, {}));
+        const items = Object.values(
+          enemies.reduce((acc, curr) => {
+            curr.drops &&
+              curr.drops.forEach((item) => {
+                acc[item.id] = item;
+              });
+            return acc;
+          }, {})
+        );
         return (
           <DungeonContainer key={i}>
-            <h3>{name} {state.player.dungeonsCompleted[name] && <>✅</>}</h3>
+            <h3>
+              {name} {state.player.dungeonsCompleted[name] && <>✅</>}
+            </h3>
             <div>Level: {lvl}</div>
-            <div>Items: <ItemList>{items.map(({ img }, i) => <img src={img} key={i} />)}</ItemList></div>
+            <div>
+              Items:{" "}
+              <ItemList>
+                {items.map(({ img }, i) => (
+                  <img src={img} key={i} />
+                ))}
+              </ItemList>
+            </div>
             <br />
-            <button onClick={() => {
-              dispatch({
-                type: 'startGame',
-                payload: dungeon,
-              });
-            }}>Start</button>
+            <button
+              onClick={() => {
+                dispatch({
+                  type: "startGame",
+                  payload: dungeon
+                });
+              }}
+            >
+              Start
+            </button>
           </DungeonContainer>
         );
       })}
     </Container>
   );
-}
+};
 
 export default DungeonList;

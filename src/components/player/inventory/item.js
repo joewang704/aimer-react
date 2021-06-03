@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import styled from '@emotion/styled';
+import React, { useContext } from "react";
+import styled from "@emotion/styled";
 
-import { GameContext } from '../../app';
+import { GameContext } from "../../app";
 
 const Container = styled.div`
   margin-right: 24px;
@@ -10,12 +10,17 @@ const Container = styled.div`
 
 const Item = ({ item }) => {
   const { dispatch } = useContext(GameContext);
+  console.log("item has been rendered");
+
+  if (!item) return null;
 
   return (
-    <Container onClick={() => dispatch({ type: 'equipItem', payload: { item } })}>
+    <Container
+      onClick={() => dispatch({ type: "equipItem", payload: { item } })}
+    >
       <img src={item.img} />
     </Container>
   );
-}
+};
 
 export default Item;

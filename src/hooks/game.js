@@ -1,59 +1,60 @@
-import { useReducer } from 'react';
+import { useReducer } from "react";
 
-import { fetchPlayer, fetchSensitivity } from '../utils/localStorage';
-import { random } from '../utils';
-import { ITEMS } from '../data/items';
+import { fetchPlayer, fetchSensitivity } from "../utils/localStorage";
+import { random } from "../utils";
+import { ITEMS } from "../data/items";
 
 const initialState = {
-  status: 'INITIAL',
+  status: "INITIAL",
   player: fetchPlayer(),
   sensitivity: fetchSensitivity(),
-  dungeon: {},
+  dungeon: {}
 };
 
 export const getXPToLevel = (lvl) => lvl * lvl * 10;
-export const getDmg = (lvl) => lvl * lvl + lvl * random(1, lvl) + random(1, lvl);
+export const getDmg = (lvl) =>
+  lvl * lvl + lvl * random(1, lvl) + random(1, lvl);
 
 const reducer = (state, action) => {
-  switch(action.type) {
-    case 'setSensitivity': {
+  switch (action.type) {
+    case "setSensitivity": {
       return {
         ...state,
-        sensitivity: action.payload.sensitivity,
-      }
+        sensitivity: action.payload.sensitivity
+      };
     }
-    case 'returnToHomeScreen': {
+    case "returnToHomeScreen": {
       return {
-        status: 'INITIAL',
+        status: "INITIAL",
         player: state.player,
-        dungeon: {},
-      }
+        dungeon: {}
+      };
     }
-    case 'startGame':
+    case "startGame":
       return {
         ...state,
-        status: 'RUNNING',
+        status: "RUNNING",
         enemies: action.payload.enemies,
         timer: action.payload.timer,
         dungeon: action.payload,
         currentEnemyIdx: 0,
         collectedXP: 0,
-        collectedItems: [],
-      }
-    case 'nextEnemy': {
+        collectedItems: []
+      };
+    case "nextEnemy": {
       return {
         ...state,
-        currentEnemyIdx: state.currentEnemyIdx + 1,
-      }
+        currentEnemyIdx: state.currentEnemyIdx + 1
+      };
     }
-    case 'damageEnemy': {
+    case "damageEnemy": {
       const { enemies, currentEnemyIdx } = state;
       const enemy = enemies[currentEnemyIdx];
       const newEnemies = enemies.slice();
       const newHP = Math.max(enemy.hp - action.payload.damage, 0);
       newEnemies[currentEnemyIdx] = {
         ...enemy,
-        hp: newHP,
+        hp: newHP
       };
 
       const newEnemyIdx = newHP ? currentEnemyIdx : currentEnemyIdx + 1;
@@ -73,7 +74,7 @@ const reducer = (state, action) => {
         state.player = {
           ...state.player,
           xp: newXP,
-          level,
+          level
         };
 
         state.collectedXP += enemy.xp;
@@ -92,36 +93,36 @@ const reducer = (state, action) => {
       if (newEnemyIdx >= enemies.length) {
         state.player.dungeonsCompleted[state.dungeon.name] = true;
         return {
-          status: 'COMPLETED',
+          status: "COMPLETED",
           collectedItems: state.collectedItems,
           collectedXP: state.collectedXP,
           dungeon: {
             ...state.dungeon,
-            success: true,
+            success: true
           },
-          player: state.player,
-        }
+          player: state.player
+        };
       }
       return {
         ...state,
         player,
         enemies: newEnemies,
-        currentEnemyIdx: newEnemyIdx,
-      }
+        currentEnemyIdx: newEnemyIdx
+      };
     }
-    case 'takeDamage': {
+    case "takeDamage": {
       const { enemies, currentEnemyIdx } = state;
       const enemy = enemies[currentEnemyIdx];
       const newHP = Math.max(state.player.hp - enemy.damage, 0);
       if (!newHP) {
         return {
-          status: 'COMPLETED',
+          status: "COMPLETED",
           collectedItems: state.collectedItems,
           collectedXP: state.collectedXP,
           player: state.player,
           dungeon: {
             ...state.dungeon,
-            success: false,
+            success: false
           }
         };
       }
@@ -129,27 +130,34 @@ const reducer = (state, action) => {
         ...state,
         player: {
           ...state.player,
-          hp: newHP,
-        },
-      }
+          hp: newHP
+        }
+      };
     }
-    case 'equipItem':
-      console.log(action);
+    case "equipItem":
+      console.log("dispatch hits data store");
       return equipItem(state, action.payload);
     default:
-      return state
+      return state;
   }
-}
+};
 
 const equipItem = (state, payload) => {
-  const s = state;
-  const { item } = payload;
-  if (s.player.level >= item.level) {
-    s.player.equipment[item.category] = item;
+  const s = { ...state };
+  const {
+    item: { category, level },
+    item
+  } = payload;
+  //if (s.player.level >= level) {
+  // TODO: renable level restrictions on items once error is shown
+  if (true) {
+    s.player.equipment[category] = item;
+    console.log(s);
+    return s;
   } else {
     // throw error here
   }
   return s;
-}
+};
 
 export const useGameReducer = () => useReducer(reducer, initialState);
